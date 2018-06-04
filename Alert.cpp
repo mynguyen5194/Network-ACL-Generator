@@ -1,12 +1,34 @@
-//
-//  Alert.cpp
-//  Generate ACLs From Snort Alert
-//
-//  Created by My Nguyen on 6/4/18.
-//  Copyright © 2018 My Nguyen. All rights reserved.
-//
 
 #include "Alert.hpp"
+
+Alert::Alert() {
+    Timestamp = "";
+    SignatureID = 0;
+    Message = "";
+    Protocol = "";
+    SourceIP = "";
+    SourcePort = 0;
+    DestinationIP = "";
+    DestinationPort = 0;
+    Next = NULL;
+}
+
+void Alert::setAlert(string timestamp, int signatureID,
+              string message, string protocol, string sourceIP,
+                     int sourcePort, string destinationIP, int destinationPort) {
+    Timestamp = timestamp;
+    SignatureID = signatureID;
+    Message = message;
+    Protocol = protocol;
+    SourceIP = sourceIP;
+    SourcePort = sourcePort;
+    DestinationIP = destinationIP;
+    DestinationPort = destinationPort;
+}
+
+void Alert::setNext(Alert * next) {
+    Next = next;
+}
 
 void Alert::setTimestamp(string timestamp) {
     Timestamp = timestamp;
@@ -33,7 +55,6 @@ void Alert::setDestinationPort(int destinationPort) {
     DestinationPort = destinationPort;
 }
 
-
 string Alert::getTimestamp() {
     return Timestamp;
 }
@@ -58,3 +79,9 @@ string Alert::getDestinationIP() {
 int Alert::getDestinationPort() {
     return DestinationPort;
 }
+Alert* Alert::getNext() {
+    return Next;
+}
+
+
+

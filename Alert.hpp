@@ -15,8 +15,15 @@ private:
     int SourcePort;
     string DestinationIP;
     int DestinationPort;
+    Alert * Next;
     
 public:
+    Alert();
+    
+    void setAlert(string timestamp, int signatureID,
+                  string message, string protocol, string sourceIP,
+                  int sourcePort, string destinationIP, int destinationPort);
+    void setNext(Alert * next);
     void setTimestamp(string timestamp);
     void setSignatureID(int signatureID);
     void setMessage(string message);
@@ -34,6 +41,8 @@ public:
     int getSourcePort();
     string getDestinationIP();
     int getDestinationPort();
+    Alert * getNext();
+    
 };
 
 #endif /* Alert_hpp */
