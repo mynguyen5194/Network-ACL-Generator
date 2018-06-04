@@ -1,4 +1,5 @@
 // https://github.com/mynguyen5194/US-Counties-Database-Analysis/blob/master/HashTable.h
+// https://www.daniweb.com/programming/software-development/threads/231987/string-hash-function
 
 #include "HashTable.hpp"
 
@@ -43,8 +44,11 @@ bool HashTable<ItemType>::isEmpty() {
 // FIX NEEDED
 template <class ItemType>
 int HashTable<ItemType>::hash(const ItemType & newEntry) {
+    int index = 0;
     
-    int index = (newEntry.getKey() * 13);
+    for (int i = 0; i < newEntry.getTimestamp().length(); ++i) {
+        index ^= (index << 5) + (index >> 2) + newEntry.getTimestamp()[i];
+    }
     
     return (index % TABLE_SIZE);
 }
