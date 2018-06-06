@@ -15,7 +15,6 @@ private:
     int SourcePort;
     string DestinationIP;
     int DestinationPort;
-    Alert * Next;
     
 public:
     Alert() {
@@ -27,7 +26,6 @@ public:
             SourcePort = 0;
             DestinationIP = "";
             DestinationPort = 0;
-            Next = NULL;
     }
     
     void setAlert(string timestamp, int signatureID,
@@ -42,7 +40,6 @@ public:
         DestinationIP = destinationIP;
         DestinationPort = destinationPort;
     }
-    void setNext(Alert * next) { Next = next; }
 
     string getTimestamp() { return Timestamp; }
     int getSignatureID() { return SignatureID; }
@@ -52,7 +49,6 @@ public:
     int getSourcePort() { return SourcePort; }
     string getDestinationIP() { return DestinationIP; }
     int getDestinationPort() { return DestinationPort; }
-    Alert * getNext() { return Next; }
     
     void printAlert() {
         cout << Timestamp << " " << SignatureID << " " << Message << " " <<
