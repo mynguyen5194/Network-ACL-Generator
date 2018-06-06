@@ -1,15 +1,13 @@
 
 #include <iostream>
 #include <fstream>
+//#include <libip>
 #include "Alert.hpp"
-
-//    void setAlert(string timestamp, int signatureID,
-//string message, string protocol, string sourceIP,
-//int sourcePort, string destinationIP, int destinationPort);
+#include "HashTable.hpp"
 
 using namespace std;
 
-bool parseAlertFile(string filePath) {
+bool parseAlertFile(HashTable<Alert> * alertHashTable, string filePath) {
     ifstream file;
     string line, delimiter = ",";
     string timestamp = "", message = "",
@@ -62,12 +60,17 @@ bool parseAlertFile(string filePath) {
         
         alertInfo.printAlert();
         
+        alertHashTable->insert(alertInfo);
+        
+        
     }
     return true;
 }
 
 int main(int argc, const char * argv[]) {
-    parseAlertFile("/Users/MyNguyen/Desktop/152C/Project/Network\ ACL\ Generator/Network\ ACL\ Generator/alertTest.csv");
+    HashTable<Alert> * alertHashTable = new HashTable<Alert>(500);
+    
+    parseAlertFile(alertHashTable, "/Users/MyNguyen/Desktop/152C/Project/Network\ ACL\ Generator/Network\ ACL\ Generator/alertTest.csv");
     
     return 0;
 }
