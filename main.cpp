@@ -8,9 +8,36 @@ using namespace std;
 
 const string LOCAL_IP = "192.168.4.1";
 
-void generateACLRule(map<string, Alert> alertMap) {
-    string rule = "sudo iptables -A";
+bool generateACLRule(Alert alert) {
+    string rule = "sudo iptables -A ";
     
+    if (alert.getSourceIP() == LOCAL_IP || alert.getDestinationIP() == LOCAL_IP) {
+        rule += "INPUT ";
+    } else {
+        rule += "FORWARD ";
+    }
+    
+    rule += "-p " + alert.getProtocol() + " ";
+    
+    if (alert.getSourcePort() != 0) {
+        rule += "--sport " + to_string(alert.getSourcePort()) + " ";
+    }
+    if (alert.getDestinationPort() != 0) {
+        rule += "--dport " + to_string(alert.getDestinationPort()) + " ";
+    }
+    
+    rule += "-s " + alert.getSourceIP() + " -d " + alert.getDestinationIP() + " -j REJECT";
+    
+    cout << rule << endl;
+    
+    int res = system(rule.c_str());
+    
+    if (res != 0) {
+        cerr << "Error: fail applying iptables rule\n";
+        return false;
+    }
+    
+    return true;
 }
 
 bool alertExisted(map<string, Alert> alertMap, string key) {
@@ -84,6 +111,7 @@ bool parseAlertFile(map<string, Alert> & alertMap, string filePath) {
         // Insert new alert if the 2 IP addresses are not in the alertMap
         if (alertExisted(alertMap, key) == false) {
             alertMap.insert(pair<string, Alert> (key, alertInfo));
+            generateACLRule(alertInfo);
         }
     }
     return true;
@@ -93,10 +121,7 @@ bool parseAlertFile(map<string, Alert> & alertMap, string filePath) {
 int main(int argc, const char * argv[]) {
     map<string, Alert> alertMap;
     
-    parseAlertFile(alertMap, "/Users/MyNguyen/Desktop/152C/Project/Network\ ACL\ Generator/Network\ ACL\ Generator/alertTest.csv");
-    
-    bool existed = alertExisted(alertMap, "192.168.4.1-192.168.4.16");
-    cout << existed << endl;
+    parseAlertFile(alertMap, "/var/log/snort/alert.csv");
     
     return 0;
 }
