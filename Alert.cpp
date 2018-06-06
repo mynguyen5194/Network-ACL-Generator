@@ -55,6 +55,12 @@ void Alert::setDestinationPort(int destinationPort) {
     DestinationPort = destinationPort;
 }
 
+void Alert::printAlert() {
+    cout << Timestamp << " " << SignatureID << " " << Message << " " <<
+            Protocol << " " << SourceIP << " " << SourcePort << " " <<
+            DestinationIP << " " << DestinationPort << endl;
+}
+
 string Alert::getTimestamp() {
     return Timestamp;
 }

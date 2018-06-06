@@ -33,6 +33,7 @@ public:
     void setDestinationIP(string destinationIP);
     void setDestinationPort(int destinationPort);
     
+    void printAlert();
     string getTimestamp();
     int getSignatureID();
     string getMessage();
