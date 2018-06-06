@@ -1,15 +1,36 @@
 
 #include <iostream>
 #include <fstream>
-//#include <libip>
+#include <map>
 #include "Alert.hpp"
-#include "HashTable.hpp"
 
 using namespace std;
 
-bool parseAlertFile(HashTable<Alert> * alertHashTable, string filePath) {
+const string LOCAL_IP = "192.168.4.1";
+
+void generateACLRule(map<string, Alert> alertMap) {
+    string rule = "sudo iptables -A";
+    
+}
+
+bool alertExisted(map<string, Alert> alertMap, string key) {
+    size_t pos = key.find("-");
+    string part1 = key.substr(0, pos);
+    string part2 = key.substr(pos+1, key.length());
+    string swappedKey = part2 + "-" + part1;
+    
+    for (auto it = alertMap.begin(); it != alertMap.end(); ++it) {
+        if (key == it->first || swappedKey == it->first) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+bool parseAlertFile(map<string, Alert> & alertMap, string filePath) {
     ifstream file;
-    string line, delimiter = ",";
+    string line, delimiter = ",", key;
     string timestamp = "", message = "",
         protocol = "", sourceIP = "", destinationIP = "";
     int signatureID = 0, sourcePort = 0, destinationPort = 0;
@@ -58,19 +79,24 @@ bool parseAlertFile(HashTable<Alert> * alertHashTable, string filePath) {
         alertInfo.setAlert(timestamp, signatureID, message,
             protocol, sourceIP, sourcePort, destinationIP, destinationPort);
         
-        alertInfo.printAlert();
+        key = sourceIP + "-" + destinationIP;
         
-        alertHashTable->insert(alertInfo);
-        
-        
+        // Insert new alert if the 2 IP addresses are not in the alertMap
+        if (alertExisted(alertMap, key) == false) {
+            alertMap.insert(pair<string, Alert> (key, alertInfo));
+        }
     }
     return true;
 }
 
+
 int main(int argc, const char * argv[]) {
-    HashTable<Alert> * alertHashTable = new HashTable<Alert>(500);
+    map<string, Alert> alertMap;
     
-    parseAlertFile(alertHashTable, "/Users/MyNguyen/Desktop/152C/Project/Network\ ACL\ Generator/Network\ ACL\ Generator/alertTest.csv");
+    parseAlertFile(alertMap, "/Users/MyNguyen/Desktop/152C/Project/Network\ ACL\ Generator/Network\ ACL\ Generator/alertTest.csv");
+    
+    bool existed = alertExisted(alertMap, "192.168.4.1-192.168.4.16");
+    cout << existed << endl;
     
     return 0;
 }
